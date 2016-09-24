@@ -9,21 +9,41 @@ import java.lang.annotation.*;
 public @interface Field {
     FieldType type() default FieldType.String;
 
-    FieldIndex index() default FieldIndex.analyzed;
+    /*boolean,date*/
+    FieldIndex index() default FieldIndex.not_analyzed;
 
+    /*date*/
     DateFormat format() default DateFormat.none;
 
-    String defaultValue() default "";
-
+    /*boolean,date*/
+    String nullValue() default "";
+    /*date*/
     String pattern() default "";
 
+    /*binary,boolean,date*/
     boolean store() default false;
+
+    /*binary,boolean,date*/
+    boolean docValues() default true;
 
     String searchAnalyzer() default "";
 
-    String indexAnalyzer() default "";
+    String analyzer() default "";
 
     String[] ignoreFields() default {};
 
     boolean includeInParent() default false;
+
+    /*boolean,date*/
+    float boost() default 1.0f;
+
+    /*date*/
+    boolean ignoreMalformed() default false;
+
+    /*date*/
+    boolean includeInAll() default false;
+
+    /*date*/
+    int precisionStep() default 16;
+
 }

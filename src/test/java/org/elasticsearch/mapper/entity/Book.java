@@ -5,6 +5,8 @@ import org.elasticsearch.mapper.annotations.*;
 @MappingSetting(timestamp = true)
 @Document(indexName = "my_store", type = "book")
 public class Book {
+    @Id
+    private Long id;
     @Field(type = FieldType.Double)
     private Double price;
 
@@ -12,12 +14,20 @@ public class Book {
     private String author;
 
     @MultiField(
-            mainField = @Field(index = FieldIndex.analyzed, indexAnalyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
+            mainField = @Field(index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
             otherFields = {
                     @NestedField(dotSuffix = "pinyin", index = FieldIndex.analyzed, indexAnalyzer = "lc_index", searchAnalyzer = "lc_search")
             }
     )
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -42,4 +52,5 @@ public class Book {
     public void setAuthor(String author) {
         this.author = author;
     }
+
 }

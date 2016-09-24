@@ -9,7 +9,7 @@ import java.io.IOException;
 public class MappingTest {
     @Test
     public void testGenMapping() throws IOException {
-        String mapping = MappingBuilder.buildMapping(Book.class, "book").string();
+        String mapping = MappingBuilder.buildMapping(Book.class).string();
         System.out.println(mapping);
     }
 }

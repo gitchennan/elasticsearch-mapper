@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 public @interface CompletionField {
     String searchAnalyzer() default "simple";
 
-    String indexAnalyzer() default "simple";
+    String analyzer() default "simple";
 
     boolean payloads() default false;
 

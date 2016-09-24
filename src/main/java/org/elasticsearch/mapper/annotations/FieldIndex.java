@@ -4,7 +4,4 @@ public enum FieldIndex {
     not_analyzed,
     analyzed,
     no;
-
-    private FieldIndex() {
-    }
 }

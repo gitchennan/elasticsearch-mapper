@@ -11,8 +11,6 @@ public enum FieldType {
     Object,
     Auto,
     Nested,
-    Ip;
-
-    private FieldType() {
-    }
+    Ip,
+    Binary;
 }
