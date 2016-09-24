@@ -7,6 +7,8 @@ public enum FieldType {
     Date,
     Float,
     Double,
+    Byte,
+    Short,
     Boolean,
     Object,
     Auto,

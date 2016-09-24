@@ -9,17 +9,49 @@ public class Book {
     private Long id;
     @Field(type = FieldType.Double)
     private Double price;
+    @Field(type = FieldType.Byte)
+    private Byte pageCount;
 
-    @Field(type = FieldType.String, index = FieldIndex.analyzed, searchAnalyzer = "ik")
+    @Field(
+            type = FieldType.String,
+            index = FieldIndex.analyzed,
+            analyzer = "ik_max_word",
+            searchAnalyzer = "ik",
+            nullValue = "chennan",
+            similarity = Similarity.BM25,
+            termVector = TermVector.with_positions,
+            ignoreAbove = 5,
+            fielddata = Fielddata.disabled
+
+    )
     private String author;
 
-    @MultiField(
-            mainField = @Field(index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
-            otherFields = {
-                    @NestedField(dotSuffix = "pinyin", index = FieldIndex.analyzed, indexAnalyzer = "lc_index", searchAnalyzer = "lc_search")
-            }
-    )
+    @Field(type = FieldType.Binary)
+    private byte[] pdf;
+
+//    @MultiField(
+//            mainField = @Field(index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
+//            otherFields = {
+//                    @NestedField(dotSuffix = "pinyin", index = FieldIndex.analyzed, indexAnalyzer = "lc_index", searchAnalyzer = "lc_search")
+//            }
+//    )
     private String name;
+
+    public byte[] getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(byte[] pdf) {
+        this.pdf = pdf;
+    }
+
+    public Byte getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(Byte pageCount) {
+        this.pageCount = pageCount;
+    }
 
     public Long getId() {
         return id;

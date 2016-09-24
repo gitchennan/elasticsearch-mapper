@@ -7,16 +7,17 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface Field {
-    FieldType type() default FieldType.String;
+    FieldType type();
 
     /*boolean,date*/
-    FieldIndex index() default FieldIndex.not_analyzed;
+    FieldIndex index() default FieldIndex._default;
 
     /*date*/
     DateFormat format() default DateFormat.none;
 
     /*boolean,date*/
     String nullValue() default "";
+
     /*date*/
     String pattern() default "";
 
@@ -25,10 +26,6 @@ public @interface Field {
 
     /*binary,boolean,date*/
     boolean docValues() default true;
-
-    String searchAnalyzer() default "";
-
-    String analyzer() default "";
 
     String[] ignoreFields() default {};
 
@@ -41,9 +38,34 @@ public @interface Field {
     boolean ignoreMalformed() default false;
 
     /*date*/
-    boolean includeInAll() default false;
+    boolean includeInAll() default true;
 
     /*date*/
-    int precisionStep() default 16;
+    int precisionStep() default 0;
 
+    /*string*/
+    Fielddata fielddata() default Fielddata.paged_bytes;
+
+    /*string*/
+    int ignoreAbove() default 0;
+
+    /*string*/
+    int positionIncrementGap() default 100;
+
+    /*string*/
+    Similarity similarity() default Similarity._default;
+
+    /*string*/
+    TermVector termVector() default TermVector.no;
+
+    /*string*/
+    String analyzer() default "";
+
+    /*string*/
+    String searchAnalyzer() default "";
+
+    /*string*/
+    String searchQuoteAnalyzer() default "";
+
+    boolean coerce() default true;
 }
