@@ -1,32 +1,32 @@
 #elasticsearch-mapper
-
+```java
 @Document(type = "book", _timestamp = true, _ttl = @TTL(enabled = true, _default = "5m"))
 public class Book {
-    /*ID,Ö»ÄÜÊÇLong»òÕßStringÀàĞÍ*/
+    /*ID,åªèƒ½æ˜¯Longæˆ–è€…Stringç±»å‹*/
     @Id
     private Long id;
 
-    /*ÊıÖµÀàĞÍ*/
+    /*æ•°å€¼ç±»å‹*/
     @Field(type = FieldType.Double, ignoreMalformed = true)
     private Double price;
 
-    /*ÊıÖµÀàĞÍ*/
+    /*æ•°å€¼ç±»å‹*/
     @Field(type = FieldType.Integer)
     private Integer pageCount;
 
-    /*Î´·Ö´ÊStringĞÍ*/
+    /*æœªåˆ†è¯Stringå‹*/
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String isnNo;
 
-    /*boolĞÍ*/
+    /*boolå‹*/
     @Field(type = FieldType.Boolean, nullValue = "false")
     private Boolean isValid;
 
-    /*ÈÕÆÚÀàĞÍ*/
+    /*æ—¥æœŸç±»å‹*/
     @Field(type = FieldType.Date, format = DateFormat.basic_time_no_millis)
     private Date publishDate;
 
-    /*·Ö´ÊStringÀàĞÍ,²¢ÉèÖÃfielddata¼ÓÔØÏŞÖÆ(µ±È»Ò²¿É²»ÉèÖÃÓÃÄ¬ÈÏ)*/
+    /*åˆ†è¯Stringç±»å‹,å¹¶è®¾ç½®fielddataåŠ è½½é™åˆ¶(å½“ç„¶ä¹Ÿå¯ä¸è®¾ç½®ç”¨é»˜è®¤)*/
     @Field(
             type = FieldType.String,
             index = FieldIndex.analyzed,
@@ -47,7 +47,7 @@ public class Book {
     )
     private String author;
 
-    /*multi field ÀàĞÍ(ÓÃÓÚ¶à×Ö¶ÎËÑË÷)*/
+    /*multi field ç±»å‹(ç”¨äºå¤šå­—æ®µæœç´¢)*/
     @MultiField(
             mainField = @Field(type = FieldType.String, index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
             otherFields = {
@@ -66,18 +66,18 @@ public class Book {
     )
     private String title;
 
-    /*Completion Context SuggesterÅäÖÃ(Èç¹û²»ÅäÖÃCompletionContextÔòÊÇCompletion Suggester)*/
+    /*Completion Context Suggesteré…ç½®(å¦‚æœä¸é…ç½®CompletionContextåˆ™æ˜¯Completion Suggester)*/
     @CompletionField(analyzer = "ik", payloads = true, context = {
             @CompletionContext(name = "bookType", type = CompletionContextType.category, defaultVal = {"algorithm"}),
             @CompletionContext(name = "bookColor", type = CompletionContextType.category, defaultVal = {"red"})
     })
     private String suggestContextField;
 
-    /*¶ş½øÖÆÀàĞÍ*/
+    /*äºŒè¿›åˆ¶ç±»å‹*/
     @Field(type = FieldType.Binary)
     private byte[] pdf;
 
-    /*ÄÚÇ¶ÀàĞÍ*/
+    /*å†…åµŒç±»å‹*/
     @NestedObject(clazz = SalesArea.class)
     private SalesArea salesArea;
 
@@ -85,11 +85,11 @@ public class Book {
 
 
 public class SalesArea {
-    /*Î´·Ö´ÊString*/
+    /*æœªåˆ†è¯String*/
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String localtionName;
 
-    /*·Ö´ÊStringÇÒ½ûÓÃfielddata*/
+    /*åˆ†è¯Stringä¸”ç¦ç”¨fielddata*/
     @Field(
             type = FieldType.String,
             index = FieldIndex.analyzed,
@@ -98,7 +98,7 @@ public class SalesArea {
     )
     private String description;
 
-    /*ÊıÖµĞÍ*/
+    /*æ•°å€¼å‹*/
     @Field(type = FieldType.Integer)
     private int openDays;
 }
@@ -111,3 +111,4 @@ public class MappingTest {
         System.out.println(mapping);
     }
 }
+```
