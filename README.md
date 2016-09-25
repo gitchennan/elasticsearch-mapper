@@ -1,5 +1,6 @@
 #elasticsearch-mapper
 ```java
+/*定义文档实体*/
 @Document(type = "book", _timestamp = true, _ttl = @TTL(enabled = true, _default = "5m"))
 public class Book {
     /*ID,只能是Long或者String类型*/
@@ -83,7 +84,7 @@ public class Book {
 
 }
 
-
+/*内嵌类型*/
 public class SalesArea {
     /*未分词String*/
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -103,7 +104,7 @@ public class SalesArea {
     private int openDays;
 }
 
-
+/*生成mapping测试*/
 public class MappingTest {
     @Test
     public void testGenMapping() throws IOException {
