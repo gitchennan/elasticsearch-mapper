@@ -4,9 +4,10 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-@Documented
-public @interface MultiField {
-    Field mainField();
+@Inherited
+public @interface FielddataRegexFilter {
 
-    MultiNestedField[] otherFields() default {};
+    boolean enable() default false;
+
+    String regex();
 }

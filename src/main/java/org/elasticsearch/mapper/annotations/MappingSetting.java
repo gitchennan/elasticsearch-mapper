@@ -6,5 +6,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface MappingSetting {
-    boolean timestamp() default false;
+    boolean _timestamp() default false;
+
+    boolean _all() default true;
+
+    TTL _ttl() default @TTL(enabled = false, _default = "5m");
+
 }

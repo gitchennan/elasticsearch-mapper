@@ -11,38 +11,14 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class MappingBuilder {
-    public static final String FIELD_DOC_VALUES = "doc_values";
-    public static final String FIELD_BOOST = "boost";
-    public static final String FIELD_STORE = "store";
     public static final String FIELD_TYPE = "type";
     public static final String FIELD_INDEX = "index";
-    public static final String FIELD_FORMAT = "format";
-    public static final String FIELD_SEARCH_ANALYZER = "search_analyzer";
-    public static final String FIELD_ANALYZER = "analyzer";
     public static final String FIELD_PROPERTIES = "properties";
     public static final String FIELD_PARENT = "_parent";
-    public static final String FIELD_DATA = "fielddata";
-    public static final String FIELD_IGNORE_ABOVE = "ignore_above";
-    public static final String FIELD_NULL_VALUE = "null_value";
-    public static final String FIELD_TERM_VECTOR = "term_vector";
-    public static final String FIELD_SIMILARITY = "similarity";
-    public static final String FIELD_QUOTE_ANALYZER = "search_quote_analyzer";
-    public static final String FIELD_COERCE = "coerce";
-    public static final String FIELD_IGNORE_MALFORMED = "ignore_malformed";
-    public static final String FIELD_INCLUDE_IN_ALL = "include_in_all";
-    public static final String FIELD_PRECISION_STEP = "precision_step";
-
-    public static final String COMPLETION_CONTEXT = "context";
-    public static final String COMPLETION_PAYLOADS = "payloads";
-    public static final String COMPLETION_PRESERVE_SEPARATORS = "preserve_separators";
-    public static final String COMPLETION_PRESERVE_POSITION_INCREMENTS = "preserve_position_increments";
-    public static final String COMPLETION_MAX_INPUT_LENGTH = "max_input_length";
 
     public static final String INDEX_VALUE_NOT_ANALYZED = "not_analyzed";
-
     public static final String TYPE_VALUE_STRING = "string";
     public static final String TYPE_VALUE_GEO_POINT = "geo_point";
-    public static final String TYPE_VALUE_COMPLETION = "completion";
 
     private MappingBuilder() {
 
@@ -62,19 +38,14 @@ public class MappingBuilder {
             mapping.startObject(FIELD_PARENT).field(FIELD_TYPE, parentType).endObject();
         }
         if (clazz.isAnnotationPresent(MappingSetting.class)) {
-            mapSetting(mapping, clazz);
+            new MappingSettingMapper().buildMapping(mapping, clazz);
         }
         XContentBuilder xContentBuilder = mapping.startObject(FIELD_PROPERTIES);
         mapEntity(xContentBuilder, clazz, true, "", false, FieldType.Auto);
         return xContentBuilder.endObject().endObject().endObject();
     }
 
-    private static void mapSetting(XContentBuilder mapping, Class clazz) throws IOException {
-        MappingSetting setting = (MappingSetting) clazz.getAnnotation(MappingSetting.class);
-        if (setting.timestamp()) {
-            mapping.startObject("_timestamp").field("store", true).field("enabled", true).endObject();
-        }
-    }
+
 
     private static void mapEntity(XContentBuilder xContentBuilder, Class clazz, boolean isRootObject,
                                   String nestedObjectFieldName, boolean nestedOrObjectField, FieldType fieldType) throws IOException {
@@ -116,7 +87,7 @@ public class MappingBuilder {
 
                 if (isCompletionField) {
                     CompletionField completionField = field.getAnnotation(CompletionField.class);
-                    applyCompletionFieldMapping(xContentBuilder, field, completionField);
+                    applyCompletionFieldMapping(xContentBuilder, field.getName(), completionField);
                 }
 
                 if (isRootObject && isIdField(field)) {
@@ -124,9 +95,9 @@ public class MappingBuilder {
                 } else if (multiField != null) {
                     addMultiFieldMapping(xContentBuilder, field, multiField);
                 } else if (singleField != null) {
-                    addSingleFieldMapping(xContentBuilder, field, singleField);
+                    addSingleFieldMapping(xContentBuilder, field.getName(), singleField);
                 } else if (nestedObject != null) {
-                    mapEntity(xContentBuilder, nestedObject.clazz(), false, nestedObject.name(), true, FieldType.Nested);
+                    mapEntity(xContentBuilder, nestedObject.clazz(), false, field.getName(), true, FieldType.Nested);
                 }
             }
         }
@@ -143,45 +114,16 @@ public class MappingBuilder {
                 || field.getAnnotation(CompletionField.class) != null;
     }
 
-    private static void applyGeoPointFieldMapping(XContentBuilder xContentBuilder, java.lang.reflect.Field field) throws IOException {
-        xContentBuilder.startObject(field.getName());
-        xContentBuilder.field(FIELD_TYPE, TYPE_VALUE_GEO_POINT).endObject();
+    private static void applyGeoPointFieldMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field) throws IOException {
+        mappingBuilder.startObject(field.getName());
+        mappingBuilder.field(FIELD_TYPE, TYPE_VALUE_GEO_POINT);
+        mappingBuilder.endObject();
     }
 
-    private static void applyCompletionFieldMapping(XContentBuilder xContentBuilder, java.lang.reflect.Field field, CompletionField annotation) throws IOException {
-        xContentBuilder.startObject(field.getName());
-        xContentBuilder.field(FIELD_TYPE, TYPE_VALUE_COMPLETION);
-        if (annotation != null) {
-            xContentBuilder.field(COMPLETION_MAX_INPUT_LENGTH, annotation.maxInputLength());
-            xContentBuilder.field(COMPLETION_PAYLOADS, annotation.payloads());
-            xContentBuilder.field(COMPLETION_PRESERVE_POSITION_INCREMENTS, annotation.preservePositionIncrements());
-            xContentBuilder.field(COMPLETION_PRESERVE_SEPARATORS, annotation.preserveSeparators());
-            if (StringUtils.isNotBlank(annotation.searchAnalyzer())) {
-                xContentBuilder.field(FIELD_SEARCH_ANALYZER, annotation.searchAnalyzer());
-            }
-
-            if (StringUtils.isNotBlank(annotation.analyzer())) {
-                xContentBuilder.field(FIELD_ANALYZER, annotation.analyzer());
-            }
-
-            if (annotation.context() != null && annotation.context().length > 0) {
-                xContentBuilder.startObject(COMPLETION_CONTEXT);
-                for (CompletionContext context : annotation.context()) {
-                    xContentBuilder.startObject(context.name());
-                    xContentBuilder.field("type", context.type());
-                    if (StringUtils.isNotBlank(context.path())) {
-                        xContentBuilder.field("path", context.path());
-                    }
-                    if (context.defaultVal() != null && context.defaultVal().length > 0) {
-                        xContentBuilder.array("default", context.defaultVal());
-                    }
-                    xContentBuilder.endObject();
-                }
-                xContentBuilder.endObject();
-            }
-        }
-
-        xContentBuilder.endObject();
+    private static void applyCompletionFieldMapping(XContentBuilder mappingBuilder, String fieldName, CompletionField annotationField) throws IOException {
+        mappingBuilder.startObject(fieldName);
+        new CompletionContextFieldMapper().buildMapping(mappingBuilder, annotationField);
+        mappingBuilder.endObject();
     }
 
     private static void applyIdFieldMapping(XContentBuilder xContentBuilder, java.lang.reflect.Field field) throws IOException {
@@ -199,8 +141,8 @@ public class MappingBuilder {
         }
     }
 
-    private static void addSingleFieldMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field, Field fieldAnnotation) throws IOException {
-        mappingBuilder.startObject(field.getName());
+    private static void addSingleFieldMapping(XContentBuilder mappingBuilder, String fieldName, Field fieldAnnotation) throws IOException {
+        mappingBuilder.startObject(fieldName);
         //numeric field setting
         if (fieldAnnotation.type() == FieldType.Long
                 || fieldAnnotation.type() == FieldType.Integer
@@ -208,46 +150,32 @@ public class MappingBuilder {
                 || fieldAnnotation.type() == FieldType.Byte
                 || fieldAnnotation.type() == FieldType.Double
                 || fieldAnnotation.type() == FieldType.Float) {
-            new NumericDataTypeMapper().buildMapping(mappingBuilder, field, fieldAnnotation);
+            new NumericFieldDataTypeMapper().buildMapping(mappingBuilder, fieldAnnotation);
         } else if (fieldAnnotation.type() == FieldType.Date) {
             //date field setting
-            new DateDataTypeMapper().buildMapping(mappingBuilder, field, fieldAnnotation);
+            new DateFieldDataTypeMapper().buildMapping(mappingBuilder, fieldAnnotation);
         } else if (fieldAnnotation.type() == FieldType.String) {
             //string field setting
-            new StringDataTypeMapper().buildMapping(mappingBuilder, field, fieldAnnotation);
+            new StringFieldDataTypeMapper().buildMapping(mappingBuilder, fieldAnnotation);
+        } else if (fieldAnnotation.type() == FieldType.Ip) {
+            //ip field
+            new IpFieldDataTypeMapper().buildMapping(mappingBuilder, fieldAnnotation);
         } else {
             //generic mapper
-            AbstractDataTypeMapper.commonMapping(mappingBuilder, field, fieldAnnotation);
+            AbstractFieldDataTypeMapper.commonMapping(mappingBuilder, fieldAnnotation);
         }
         mappingBuilder.endObject();
-    }
-
-    private static void addNestedFieldMapping(XContentBuilder builder, java.lang.reflect.Field field, NestedField annotation) throws IOException {
-        builder.startObject(field.getName() + "." + annotation.dotSuffix());
-        builder.field(FIELD_STORE, annotation.store());
-        if (FieldType.Auto != annotation.type()) {
-            builder.field(FIELD_TYPE, annotation.type().name().toLowerCase());
-        }
-        if (FieldIndex.not_analyzed == annotation.index()) {
-            builder.field(FIELD_INDEX, annotation.index().name().toLowerCase());
-        }
-        if (StringUtils.isNotBlank(annotation.searchAnalyzer())) {
-            builder.field(FIELD_SEARCH_ANALYZER, annotation.searchAnalyzer());
-        }
-        if (StringUtils.isNotBlank(annotation.indexAnalyzer())) {
-            builder.field(FIELD_ANALYZER, annotation.indexAnalyzer());
-        }
-        builder.endObject();
     }
 
     private static void addMultiFieldMapping(XContentBuilder builder, java.lang.reflect.Field field, MultiField annotation) throws IOException {
         builder.startObject(field.getName());
         builder.field(FIELD_TYPE, "multi_field");
         builder.startObject("fields");
-        addSingleFieldMapping(builder, field, annotation.mainField());
+        addSingleFieldMapping(builder, field.getName(), annotation.mainField());
 
-        for (NestedField nestedField : annotation.otherFields()) {
-            addNestedFieldMapping(builder, field, nestedField);
+        for (MultiNestedField multiNestedField : annotation.otherFields()) {
+            String nestFieldName = String.format("%s.%s", field.getName(), multiNestedField.dotSuffix());
+            addSingleFieldMapping(builder, nestFieldName, multiNestedField.nestedField());
         }
         builder.endObject();
         builder.endObject();

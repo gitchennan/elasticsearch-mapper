@@ -2,87 +2,79 @@ package org.elasticsearch.mapper.entity;
 
 import org.elasticsearch.mapper.annotations.*;
 
-@MappingSetting(timestamp = true)
+import java.util.Date;
+
+@MappingSetting(_timestamp = true, _ttl = @TTL(enabled = true, _default = "5m"))
 @Document(indexName = "my_store", type = "book")
 public class Book {
     @Id
     private Long id;
-    @Field(type = FieldType.Double)
+
+    @Field(type = FieldType.Double, ignoreMalformed = true)
     private Double price;
-    @Field(type = FieldType.Byte)
-    private Byte pageCount;
+
+    @Field(type = FieldType.Integer)
+    private Integer pageCount;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String isnNo;
+
+    @Field(type = FieldType.Boolean, nullValue = "false")
+    private Boolean isValid;
+
+    @Field(type = FieldType.Date, format = DateFormat.basic_time_no_millis)
+    private Date publishDate;
 
     @Field(
             type = FieldType.String,
             index = FieldIndex.analyzed,
             analyzer = "ik_max_word",
-            searchAnalyzer = "ik",
-            nullValue = "chennan",
-            similarity = Similarity.BM25,
-            termVector = TermVector.with_positions,
-            ignoreAbove = 5,
-            fielddata = Fielddata.disabled
+            searchAnalyzer = "ik_smart",
+            termVector = TermVector.with_positions_offsets,
+            fielddata = @Fielddata(
+                    format = FielddataFormat.paged_bytes,
+                    frequency = @FielddataFrequencyFilter(
+                            enable = true,
+                            min = 0.001,
+                            max = 1.2,
+                            minSegmentSize = 500
+                    ),
+                    loading = FielddataLoading.eager_global_ordinals
+            )
 
     )
     private String author;
 
+
+    @MultiField(
+            mainField = @Field(type = FieldType.String, index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
+            otherFields = {
+                    @MultiNestedField(dotSuffix = "pinyin", nestedField = @Field(
+                            type = FieldType.String,
+                            index = FieldIndex.analyzed,
+                            analyzer = "lc_index",
+                            searchAnalyzer = "lc_search")
+                    ),
+                    @MultiNestedField(dotSuffix = "english", nestedField = @Field(
+                            type = FieldType.String,
+                            index = FieldIndex.analyzed,
+                            analyzer = "standard")
+                    )
+            }
+    )
+    private String title;
+
+    @CompletionField(analyzer = "ik", payloads = true, context = {
+            @CompletionContext(name = "bookType", type = CompletionContextType.category, defaultVal = {"algorithm"}),
+            @CompletionContext(name = "bookColor", type = CompletionContextType.category, defaultVal = {"red"})
+    })
+    private String suggestContextField;
+
     @Field(type = FieldType.Binary)
     private byte[] pdf;
 
-//    @MultiField(
-//            mainField = @Field(index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
-//            otherFields = {
-//                    @NestedField(dotSuffix = "pinyin", index = FieldIndex.analyzed, indexAnalyzer = "lc_index", searchAnalyzer = "lc_search")
-//            }
-//    )
-    private String name;
+    @NestedObject(clazz = SalesArea.class)
+    private SalesArea salesArea;
 
-    public byte[] getPdf() {
-        return pdf;
-    }
-
-    public void setPdf(byte[] pdf) {
-        this.pdf = pdf;
-    }
-
-    public Byte getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(Byte pageCount) {
-        this.pageCount = pageCount;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
 
 }

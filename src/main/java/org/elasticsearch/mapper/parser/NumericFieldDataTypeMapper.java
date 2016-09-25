@@ -6,9 +6,9 @@ import org.elasticsearch.mapper.utils.StringUtils;
 
 import java.io.IOException;
 
-public class NumericDataTypeMapper extends AbstractDataTypeMapper {
+public class NumericFieldDataTypeMapper extends AbstractFieldDataTypeMapper {
     @Override
-    protected void internalBuildMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field, Field fieldAnnotation) throws IOException {
+    protected void internalBuildMapping(XContentBuilder mappingBuilder, Field fieldAnnotation) throws IOException {
         //coerce
         if (!fieldAnnotation.coerce()) {
             mappingBuilder.field(FIELD_COERCE, false);
@@ -16,10 +16,6 @@ public class NumericDataTypeMapper extends AbstractDataTypeMapper {
         //ignore_malformed
         if (fieldAnnotation.ignoreMalformed()) {
             mappingBuilder.field(FIELD_IGNORE_MALFORMED, true);
-        }
-        //null_values
-        if (StringUtils.isNotBlank(fieldAnnotation.nullValue())) {
-            mappingBuilder.field(FIELD_NULL_VALUE, fieldAnnotation.nullValue());
         }
         //precision_step
         if (fieldAnnotation.precisionStep() > 0) {

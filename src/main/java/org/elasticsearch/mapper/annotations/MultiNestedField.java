@@ -7,16 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface NestedField {
+public @interface MultiNestedField {
     String dotSuffix();
 
-    FieldType type() default FieldType.String;
-
-    FieldIndex index() default FieldIndex.analyzed;
-
-    boolean store() default false;
-
-    String searchAnalyzer() default "";
-
-    String indexAnalyzer() default "";
+    Field nestedField();
 }

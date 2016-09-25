@@ -14,5 +14,6 @@ public enum FieldType {
     Auto,
     Nested,
     Ip,
-    Binary;
+    Binary,
+    Token_Count
 }

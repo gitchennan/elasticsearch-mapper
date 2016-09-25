@@ -3,10 +3,11 @@ package org.elasticsearch.mapper.parser;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.mapper.annotations.Field;
 import org.elasticsearch.mapper.annotations.FieldIndex;
+import org.elasticsearch.mapper.utils.StringUtils;
 
 import java.io.IOException;
 
-public abstract class AbstractDataTypeMapper {
+public abstract class AbstractFieldDataTypeMapper {
     public static final String FIELD_DOC_VALUES = "doc_values";
     public static final String FIELD_BOOST = "boost";
     public static final String FIELD_STORE = "store";
@@ -28,6 +29,9 @@ public abstract class AbstractDataTypeMapper {
     public static final String FIELD_INCLUDE_IN_ALL = "include_in_all";
     public static final String FIELD_PRECISION_STEP = "precision_step";
 
+    public static final String FIELD_DATA_FILTER = "filter";
+    public static final String FIELD_DATA_LOADING = "loading";
+
     public static final String COMPLETION_CONTEXT = "context";
     public static final String COMPLETION_PAYLOADS = "payloads";
     public static final String COMPLETION_PRESERVE_SEPARATORS = "preserve_separators";
@@ -40,7 +44,7 @@ public abstract class AbstractDataTypeMapper {
     public static final String TYPE_VALUE_GEO_POINT = "geo_point";
     public static final String TYPE_VALUE_COMPLETION = "completion";
 
-    public static void commonMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field, Field fieldAnnotation) throws IOException {
+    public static void commonMapping(XContentBuilder mappingBuilder, Field fieldAnnotation) throws IOException {
         //store
         if (fieldAnnotation.store()) {
             mappingBuilder.field(FIELD_STORE, true);
@@ -63,13 +67,17 @@ public abstract class AbstractDataTypeMapper {
         if (!fieldAnnotation.includeInAll()) {
             mappingBuilder.field(FIELD_INCLUDE_IN_ALL, false);
         }
+        //null_value
+        if (StringUtils.isNotBlank(fieldAnnotation.nullValue())) {
+            mappingBuilder.field(FIELD_NULL_VALUE, fieldAnnotation.nullValue());
+        }
     }
 
-    protected abstract void internalBuildMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field, Field fieldAnnotation) throws IOException;
+    protected abstract void internalBuildMapping(XContentBuilder mappingBuilder, Field fieldAnnotation) throws IOException;
 
-    public final void buildMapping(XContentBuilder mappingBuilder, java.lang.reflect.Field field, Field fieldAnnotation) throws IOException {
-        commonMapping(mappingBuilder, field, fieldAnnotation);
-        internalBuildMapping(mappingBuilder, field, fieldAnnotation);
+    public final void buildMapping(XContentBuilder mappingBuilder, Field fieldAnnotation) throws IOException {
+        commonMapping(mappingBuilder, fieldAnnotation);
+        internalBuildMapping(mappingBuilder, fieldAnnotation);
     }
 
 }

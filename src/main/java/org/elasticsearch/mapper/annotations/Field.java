@@ -44,7 +44,7 @@ public @interface Field {
     int precisionStep() default 0;
 
     /*string*/
-    Fielddata fielddata() default Fielddata.paged_bytes;
+    Fielddata fielddata() default @Fielddata;
 
     /*string*/
     int ignoreAbove() default 0;
