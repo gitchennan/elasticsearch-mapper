@@ -25,26 +25,27 @@ public class MappingBuilder {
     }
 
     public static XContentBuilder buildMapping(Class clazz) throws IOException {
+        return buildMapping(clazz, null);
+    }
+
+    public static XContentBuilder buildMapping(Class clazz, String parentType) throws IOException {
         if (clazz == null || !clazz.isAnnotationPresent(Document.class)) {
             throw new IllegalArgumentException("The clazz cannot be null and annotation present [@Document]");
         }
         Document docType = (Document) clazz.getAnnotation(Document.class);
-        return buildMapping(clazz, docType.type(), null);
-    }
-
-    public static XContentBuilder buildMapping(Class clazz, String indexType, String parentType) throws IOException {
+        String indexType = docType.type();
         XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject(indexType);
         if (StringUtils.isNotBlank(parentType)) {
             mapping.startObject(FIELD_PARENT).field(FIELD_TYPE, parentType).endObject();
         }
-        if (clazz.isAnnotationPresent(MappingSetting.class)) {
-            new MappingSettingMapper().buildMapping(mapping, clazz);
-        }
+
+        MappingSettingMapper mappingSettingMapper = new MappingSettingMapper();
+        mappingSettingMapper.buildMapping(mapping, clazz);
+
         XContentBuilder xContentBuilder = mapping.startObject(FIELD_PROPERTIES);
         mapEntity(xContentBuilder, clazz, true, "", false, FieldType.Auto);
         return xContentBuilder.endObject().endObject().endObject();
     }
-
 
 
     private static void mapEntity(XContentBuilder xContentBuilder, Class clazz, boolean isRootObject,
@@ -185,7 +186,7 @@ public class MappingBuilder {
         return field.getType().isAnnotationPresent(Document.class);
     }
 
-    protected static Class<?> getFieldType(java.lang.reflect.Field field) {
+    private static Class<?> getFieldType(java.lang.reflect.Field field) {
         return field.getType();
     }
 

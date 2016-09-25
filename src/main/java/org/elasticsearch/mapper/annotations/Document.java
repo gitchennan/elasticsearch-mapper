@@ -6,15 +6,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Document {
-    String indexName();
+    String type();
 
-    String type() default "basic";
+    boolean _timestamp() default false;
 
-    short shards() default 1;
+    boolean _all() default true;
 
-    short replicas() default 3;
-
-    String refreshInterval() default "1s";
-
-    String indexStoreType() default "fs";
+    TTL _ttl() default @TTL(enabled = false, _default = "5m");
 }
