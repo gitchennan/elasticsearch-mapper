@@ -50,9 +50,7 @@ public class CompletionContextFieldMapper {
                         mappingBuilder.array("default", context.defaultVal());
                     }
                     if (context.type() == CompletionContextType.geo) {
-                        for (String precisionItem : context.precision()) {
-                            mappingBuilder.array("precision", context.precision());
-                        }
+                        mappingBuilder.array("precision", context.precision());
                     }
                     if (!context.neighbors()) {
                         mappingBuilder.field("neighbors", false);
