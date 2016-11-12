@@ -13,7 +13,10 @@ public class MappingSettingMapper {
     public void buildMapping(XContentBuilder mapping, Class clazz) throws IOException {
         Document setting = (Document) clazz.getAnnotation(Document.class);
         if (setting._timestamp()) {
-            mapping.startObject(META_FIELD_TIMESTAMP).field("enabled", true).endObject();
+            mapping.startObject(META_FIELD_TIMESTAMP)
+                    .field("enabled", true)
+                    .field("store", true)
+                    .endObject();
         }
         if (!setting._all()) {
             mapping.startObject(META_FIELD_ALL).field("enabled", false).endObject();
