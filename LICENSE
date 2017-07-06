@@ -36,7 +36,7 @@ in or attached to the work (an example is provided in the Appendix below).
 
 "Derivative Works" shall mean any work, whether in Source or Object form, that
 is based on (or derived from) the Work and for which the editorial revisions,
-org.elasticsearch.mapper.annotations, elaborations, or other modifications represent, as a whole, an
+org.elasticsearch.mapper.x2.annotations, elaborations, or other modifications represent, as a whole, an
 original work of authorship. For the purposes of this License, Derivative Works
 shall not include works that remain separable from, or merely link (or bind by
 name) to the interfaces of, the Work and Derivative Works thereof.
