@@ -34,7 +34,7 @@ public class MappingBuilder {
         }
         Document docType = (Document) clazz.getAnnotation(Document.class);
         String indexType = docType.type();
-        XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject(indexType);
+        XContentBuilder mapping = XContentFactory.jsonBuilder().prettyPrint().startObject().startObject(indexType);
         if (StringUtils.isNotBlank(parentType)) {
             mapping.startObject(FIELD_PARENT).field(FIELD_TYPE, parentType).endObject();
         }

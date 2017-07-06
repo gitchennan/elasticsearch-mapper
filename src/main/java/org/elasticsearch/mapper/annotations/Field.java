@@ -56,7 +56,7 @@ public @interface Field {
     Similarity similarity() default Similarity._default;
 
     /*string*/
-    TermVectorx termVector() default TermVectorx.no;
+    TermVector termVector() default TermVector.no;
 
     /*string*/
     String analyzer() default "";

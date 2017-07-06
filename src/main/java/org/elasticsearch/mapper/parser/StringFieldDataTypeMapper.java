@@ -54,7 +54,7 @@ public class StringFieldDataTypeMapper extends AbstractFieldDataTypeMapper {
                 mappingBuilder.field(FIELD_QUOTE_ANALYZER, fieldAnnotation.searchQuoteAnalyzer());
             }
             //term_vector
-            if (fieldAnnotation.termVector() != TermVectorx.no) {
+            if (fieldAnnotation.termVector() != TermVector.no) {
                 mappingBuilder.field(FIELD_TERM_VECTOR, fieldAnnotation.termVector().name());
             }
         }
