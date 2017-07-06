@@ -1,6 +1,6 @@
 package org.elasticsearch.mapper.annotations;
 
-public enum TermVector {
+public enum TermVectorx {
     no,
     yes,
     with_positions,

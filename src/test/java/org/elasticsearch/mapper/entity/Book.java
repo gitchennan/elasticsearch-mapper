@@ -36,7 +36,7 @@ public class Book {
             index = FieldIndex.analyzed,
             analyzer = "ik_max_word",
             searchAnalyzer = "ik_smart",
-            termVector = TermVector.with_positions_offsets,
+            termVector = TermVectorx.with_positions_offsets,
             fielddata = @Fielddata(
                     format = FielddataFormat.paged_bytes,
                     frequency = @FielddataFrequencyFilter(
