@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.elasticsearch</groupId>
     <artifactId>elasticsearch-mapper</artifactId>
-    <version>2.2.2</version>
+    <version>5.2.0</version>
     <packaging>jar</packaging>
     <description>ElasticSearch document mapping</description>
-    <inceptionYear>2016</inceptionYear>
+    <inceptionYear>2017</inceptionYear>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -19,8 +19,8 @@
     </licenses>
 
     <properties>
-        <elasticsearch.version>2.4.0</elasticsearch.version>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <elasticsearch.version>5.2.0</elasticsearch.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 	
     <repositories>
@@ -39,12 +39,30 @@
 	
     <dependencies>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>
-            <scope>compile</scope>
         </dependency>
-		<dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -60,8 +78,8 @@
                 <version>2.3.2</version>
                 <configuration>
                     <encoding>utf-8</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
