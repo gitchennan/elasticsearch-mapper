@@ -122,13 +122,21 @@ public class MappingBuilder {
     private XContentBuilder buildFieldProperty(XContentBuilder mappingBuilder, Field field) throws IOException {
         mappingBuilder.startObject(field.getName());
 
+        // Range field
+        if (RangeFieldMapper.isValidRangeFieldType(field)) {
+            RangeFieldMapper.mapDataType(mappingBuilder, field);
+        }
         // Number
-        if (NumericFieldMapper.isValidNumberType(field)) {
+        else if (NumericFieldMapper.isValidNumberType(field)) {
             NumericFieldMapper.mapDataType(mappingBuilder, field);
         }
         // Boolean
         else if (BooleanFieldMapper.isValidBooleanType(field)) {
             BooleanFieldMapper.mapDataType(mappingBuilder, field);
+        }
+        // Binary field
+        else if (BinaryFieldMapper.isValidBinaryType(field)) {
+            BinaryFieldMapper.mapDataType(mappingBuilder, field);
         }
         // Multi field
         else if (MultiFieldMapper.isValidMultiFieldType(field)) {

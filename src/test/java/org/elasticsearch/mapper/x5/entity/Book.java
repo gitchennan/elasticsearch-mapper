@@ -39,4 +39,8 @@ public class Book {
     @BooleanField(boost = 2.0f)
     private Boolean isValid;
 
+    private SalesArea[] salesAreas;
+
+    @BinaryField(store = true)
+    private String binField;
 }

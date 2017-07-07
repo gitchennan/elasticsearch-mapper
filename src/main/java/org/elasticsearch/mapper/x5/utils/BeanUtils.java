@@ -22,15 +22,26 @@ public class BeanUtils {
     }
 
     public static boolean isCollectionType(Field field) {
-        return field.getType() == List.class || field.getType() == Set.class;
+        return field.getType() == List.class || field.getType() == Set.class || field.getType().isArray();
     }
 
     public static boolean isValidCollectionType(Field field) {
-        return isCollectionType(field) &&
-                ((ParameterizedType) field.getGenericType()).getActualTypeArguments().length == 1;
+        if (field.getType().isArray()) {
+            return true;
+        }
+
+        if (isCollectionType(field)) {
+            Type[] argTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+            return argTypes.length == 1;
+        }
+        return false;
+
     }
 
     public static Type getCollectionGenericType(Field field) {
+        if (field.getType().isArray()) {
+            return ((Class) field.getGenericType()).getComponentType();
+        }
         return ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
     }
 }
