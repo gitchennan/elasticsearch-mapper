@@ -1,115 +1,170 @@
 #elasticsearch-mapper
 ```java
-/*定义文档实体*/
-@Document(type = "book", _timestamp = true, _ttl = @TTL(enabled = true, _default = "5m"))
-public class Book {
-    /*ID,只能是Long或者String类型*/
-    @Id
-    private Long id;
+org.elasticsearch.mapper.test.MappingTest
 
-    /*数值类型*/
-    @Field(type = FieldType.Double, ignoreMalformed = true)
-    private Double price;
 
-    /*数值类型*/
-    @Field(type = FieldType.Integer)
-    private Integer pageCount;
+@Document(_type = "macBook", _all = @MetaField_All(enabled = false), _parent = @MetaField_Parent(parentClass = Computer.class))
+public class MacBook extends Component {
 
-    /*未分词String型*/
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String isnNo;
+    // default: keyword
+    private String deviceName;
 
-    /*bool型*/
-    @Field(type = FieldType.Boolean, nullValue = "false")
-    private Boolean isValid;
+    @StringField(type = StringType.Text)
+    private String manufacturer;
 
-    /*日期类型*/
-    @Field(type = FieldType.Date, format = DateFormat.basic_time_no_millis)
-    private Date publishDate;
-
-    /*分词String类型,并设置fielddata加载限制(当然也可不设置用默认)*/
-    @Field(
-            type = FieldType.String,
-            index = FieldIndex.analyzed,
-            analyzer = "ik_max_word",
-            searchAnalyzer = "ik_smart",
-            termVector = TermVector.with_positions_offsets,
-            fielddata = @Fielddata(
-                    format = FielddataFormat.paged_bytes,
-                    frequency = @FielddataFrequencyFilter(
-                            enable = true,
-                            min = 0.001,
-                            max = 1.2,
-                            minSegmentSize = 500
-                    ),
-                    loading = FielddataLoading.eager_global_ordinals
-            )
-
-    )
-    private String author;
-
-    /*multi field 类型(用于多字段搜索)*/
     @MultiField(
-            mainField = @Field(type = FieldType.String, index = FieldIndex.analyzed, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"),
-            otherFields = {
-                    @MultiNestedField(dotSuffix = "pinyin", nestedField = @Field(
-                            type = FieldType.String,
-                            index = FieldIndex.analyzed,
-                            analyzer = "lc_index",
-                            searchAnalyzer = "lc_search")
-                    ),
-                    @MultiNestedField(dotSuffix = "english", nestedField = @Field(
-                            type = FieldType.String,
-                            index = FieldIndex.analyzed,
-                            analyzer = "standard")
-                    )
+            mainField = @StringField(type = StringType.Keyword, boost = 2.0f),
+            fields = {
+                    @MultiNestedField(name = "pinyin", field = @StringField(type = StringType.Text, analyzer = "lc_pinyin")),
+                    @MultiNestedField(name = "cn", field = @StringField(type = StringType.Text, analyzer = "ik_smart")),
+                    @MultiNestedField(name = "en", field = @StringField(type = StringType.Text, analyzer = "english")),
+            },
+            tokenFields = {
+                    @TokenCountField(name = "cnTokenCount", analyzer = "ik_smart")
             }
     )
-    private String title;
+    private String introduction;
 
-    /*Completion Context Suggester配置(如果不配置CompletionContext则是Completion Suggester)*/
-    @CompletionField(analyzer = "ik", payloads = true, context = {
-            @CompletionContext(name = "bookType", type = CompletionContextType.category, defaultVal = {"algorithm"}),
-            @CompletionContext(name = "bookColor", type = CompletionContextType.category, defaultVal = {"red"})
-    })
-    private String suggestContextField;
+    // nested doc
+    private List<User> users;
 
-    /*二进制类型*/
-    @Field(type = FieldType.Binary)
-    private byte[] pdf;
+    // inner doc
+    private Cpu cpu;
 
-    /*内嵌类型*/
-    @NestedObject(clazz = SalesArea.class)
-    private SalesArea salesArea;
-
+    //inner doc
+    private Memory memory;
 }
 
-/*内嵌类型*/
-public class SalesArea {
-    /*未分词String*/
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String localtionName;
+public class Component {
 
-    /*分词String且禁用fielddata*/
-    @Field(
-            type = FieldType.String,
-            index = FieldIndex.analyzed,
-            analyzer = "ik_max_word",
-            fielddata = @Fielddata(format = FielddataFormat.disabled)
-    )
-    private String description;
+    private String serialNo;
 
-    /*数值型*/
-    @Field(type = FieldType.Integer)
-    private int openDays;
+    private String madeIn;
 }
 
-/*生成mapping测试*/
-public class MappingTest {
-    @Test
-    public void testGenMapping() throws IOException {
-        String mapping = MappingBuilder.buildMapping(Book.class).string();
-        System.out.println(mapping);
+@Document(_type = "computer")
+public class Computer {
+    private String parentField;
+}
+
+
+public class User {
+
+    private boolean isRoot;
+
+    private String username;
+
+    private String password;
+}
+
+public class Cpu extends Component {
+    private int coreNumber;
+}
+
+
+public class Memory extends Component {
+    @NumberField(type = NumberType.Byte)
+    private Byte memorySize;
+}
+
+{
+  "computer" : {
+    "properties" : {
+      "parentField" : {
+        "type" : "keyword"
+      }
     }
+  }
 }
+
+
+{
+  "macBook" : {
+    "_all" : {
+      "enabled" : false
+    },
+    "_parent" : {
+      "type" : "computer"
+    },
+    "properties" : {
+      "deviceName" : {
+        "type" : "keyword"
+      },
+      "manufacturer" : {
+        "type" : "text"
+      },
+      "introduction" : {
+        "type" : "keyword",
+        "boost" : 2.0,
+        "fields" : {
+          "pinyin" : {
+            "type" : "text",
+            "analyzer" : "lc_pinyin"
+          },
+          "cn" : {
+            "type" : "text",
+            "analyzer" : "ik_smart"
+          },
+          "en" : {
+            "type" : "text",
+            "analyzer" : "english"
+          },
+          "cnTokenCount" : {
+            "type" : "token_count",
+            "analyzer" : "ik_smart"
+          }
+        }
+      },
+      "users" : {
+        "type" : "nested",
+        "properties" : {
+          "isRoot" : {
+            "type" : "boolean"
+          },
+          "username" : {
+            "type" : "keyword"
+          },
+          "password" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "cpu" : {
+        "type" : "object",
+        "properties" : {
+          "coreNumber" : {
+            "type" : "integer"
+          },
+          "serialNo" : {
+            "type" : "keyword"
+          },
+          "madeIn" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "memory" : {
+        "type" : "object",
+        "properties" : {
+          "memorySize" : {
+            "type" : "byte"
+          },
+          "serialNo" : {
+            "type" : "keyword"
+          },
+          "madeIn" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "serialNo" : {
+        "type" : "keyword"
+      },
+      "madeIn" : {
+        "type" : "keyword"
+      }
+    }
+  }
+}
+
 ```
