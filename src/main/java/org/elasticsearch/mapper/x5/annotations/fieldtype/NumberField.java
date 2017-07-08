@@ -1,5 +1,7 @@
 package org.elasticsearch.mapper.x5.annotations.fieldtype;
 
+import org.elasticsearch.mapper.x5.annotations.enums.NumberType;
+
 import java.lang.annotation.*;
 
 @Inherited
@@ -9,7 +11,7 @@ public @interface NumberField {
     /**
      * type of number.
      * <p/>
-     * {@link org.elasticsearch.mapper.x5.annotations.fieldtype.NumberType}
+     * {@link NumberType}
      */
     NumberType type();
 

@@ -1,8 +1,8 @@
 package org.elasticsearch.mapper.x5.mapper;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.mapper.x5.annotations.enums.RangeType;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.RangeField;
-import org.elasticsearch.mapper.x5.annotations.fieldtype.RangeType;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -18,6 +18,10 @@ public class RangeFieldMapper {
 
         if (rangeField.type() == RangeType.DateRange) {
             mappingBuilder.field("format", rangeField.format());
+        }
+
+        if (!rangeField.coerce()) {
+            mappingBuilder.field("coerce", rangeField.coerce());
         }
 
         if (rangeField.boost() != 1.0f) {

@@ -22,7 +22,9 @@ public class BeanUtils {
     }
 
     public static boolean isCollectionType(Field field) {
-        return field.getType() == List.class || field.getType() == Set.class || field.getType().isArray();
+        return field.getType() == List.class
+                || field.getType() == Set.class
+                || field.getType().isArray();
     }
 
     public static boolean isValidCollectionType(Field field) {

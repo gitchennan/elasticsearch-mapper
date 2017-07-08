@@ -1,37 +1,23 @@
 package org.elasticsearch.mapper.x5.annotations.fieldtype;
 
-import org.elasticsearch.mapper.x5.annotations.enums.RangeType;
-
 import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface RangeField {
-    /**
-     * type of range
-     * <p>
-     * {@link RangeType}
-     */
-    RangeType type();
-
-    /**
-     * The date format(s) that can be parsed. Defaults to strict_date_optional_time||epoch_millis.
-     * <p>
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html
-     */
-    String format() default "strict_date_optional_time||epoch_millis";
-
-    /**
-     * Try to convert strings to numbers and truncate fractions for integers.
-     * Accepts true (default) and false.
-     */
-    boolean coerce() default true;
+public @interface IPField {
 
     /**
      * Mapping field-level query time boosting. Accepts a floating point number, defaults to 1.0.
      */
     float boost() default 1.0f;
+
+    /**
+     * Should the field be stored on disk in a column-stride fashion,
+     * so that it can later be used for sorting, aggregations, or scripting?
+     * Accepts true (default) or false.
+     */
+    boolean doc_values() default true;
 
     /**
      * Whether or not the field value should be included in the _all field?
@@ -45,10 +31,18 @@ public @interface RangeField {
      */
     boolean index() default true;
 
+    /**
+     * Accepts a string value which is substituted for any explicit null values.
+     * Defaults to null, which means the field is treated as missing.
+     */
+    String null_value() default "";
 
     /**
      * Whether the field value should be stored and retrievable separately from the _source field.
      * Accepts true or false (default).
      */
     boolean store() default false;
+
 }
+
+

@@ -18,4 +18,9 @@ public @interface MultiField {
      */
     MultiNestedField[] fields() default {};
 
+    /**
+     * A field of type token_count is really an integer field which accepts string values, analyzes them,
+     * then indexes the number of tokens in the string
+     */
+    TokenCountField[] tokenFields() default {};
 }

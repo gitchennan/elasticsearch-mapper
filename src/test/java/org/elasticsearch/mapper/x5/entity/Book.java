@@ -2,6 +2,8 @@ package org.elasticsearch.mapper.x5.entity;
 
 
 import org.elasticsearch.mapper.x5.annotations.Document;
+import org.elasticsearch.mapper.x5.annotations.enums.NumberType;
+import org.elasticsearch.mapper.x5.annotations.enums.StringType;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.*;
 import org.elasticsearch.mapper.x5.annotations.meta.MetaField_All;
 import org.elasticsearch.mapper.x5.annotations.meta.MetaField_Parent;
@@ -27,6 +29,9 @@ public class Book {
                                     min_segment_size = 15
                             )
                     )))
+            },
+            tokenFields = {
+                    @TokenCountField(name = "length", analyzer = "standard")
             }
     )
     private String title;
@@ -43,4 +48,10 @@ public class Book {
 
     @BinaryField(store = true)
     private String binField;
+
+    @PercolatorField
+    private String matchAllQuery;
+
+    @CompletionField
+    private String suggest;
 }

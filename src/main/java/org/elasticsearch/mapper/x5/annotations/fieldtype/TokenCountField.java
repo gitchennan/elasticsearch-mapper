@@ -1,37 +1,37 @@
 package org.elasticsearch.mapper.x5.annotations.fieldtype;
 
-import org.elasticsearch.mapper.x5.annotations.enums.RangeType;
-
 import java.lang.annotation.*;
 
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface RangeField {
-    /**
-     * type of range
-     * <p>
-     * {@link RangeType}
-     */
-    RangeType type();
+public @interface TokenCountField {
+
+    String name();
 
     /**
-     * The date format(s) that can be parsed. Defaults to strict_date_optional_time||epoch_millis.
-     * <p>
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html
+     * The analyzer which should be used to analyze the string value.
+     * Required. For best performance, use an analyzer without token filters.
      */
-    String format() default "strict_date_optional_time||epoch_millis";
+    String analyzer();
 
     /**
-     * Try to convert strings to numbers and truncate fractions for integers.
-     * Accepts true (default) and false.
+     * Indicates if position increments should be counted.
+     * Set to false if you don¡¯t want to count tokens removed by analyzer filters (like stop). Defaults to true.
      */
-    boolean coerce() default true;
+    boolean enable_position_increments() default true;
 
     /**
      * Mapping field-level query time boosting. Accepts a floating point number, defaults to 1.0.
      */
     float boost() default 1.0f;
+
+    /**
+     * Should the field be stored on disk in a column-stride fashion,
+     * so that it can later be used for sorting, aggregations, or scripting?
+     * Accepts true (default) or false.
+     */
+    boolean doc_values() default true;
 
     /**
      * Whether or not the field value should be included in the _all field?
@@ -45,6 +45,11 @@ public @interface RangeField {
      */
     boolean index() default true;
 
+    /**
+     * Accepts a string value which is substituted for any explicit null values.
+     * Defaults to null, which means the field is treated as missing.
+     */
+    String null_value() default "";
 
     /**
      * Whether the field value should be stored and retrievable separately from the _source field.
@@ -52,3 +57,5 @@ public @interface RangeField {
      */
     boolean store() default false;
 }
+
+

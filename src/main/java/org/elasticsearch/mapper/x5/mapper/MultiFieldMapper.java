@@ -3,6 +3,7 @@ package org.elasticsearch.mapper.x5.mapper;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.MultiField;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.MultiNestedField;
+import org.elasticsearch.mapper.x5.annotations.fieldtype.TokenCountField;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -27,6 +28,12 @@ public class MultiFieldMapper {
         for (MultiNestedField otherField : multiField.fields()) {
             mappingBuilder.startObject(otherField.name());
             StringFieldMapper.mapDataType(mappingBuilder, otherField.field());
+            mappingBuilder.endObject();
+        }
+
+        for (TokenCountField tokenCountField : multiField.tokenFields()) {
+            mappingBuilder.startObject(tokenCountField.name());
+            TokenCountFieldMapper.mapDataType(mappingBuilder, tokenCountField);
             mappingBuilder.endObject();
         }
 

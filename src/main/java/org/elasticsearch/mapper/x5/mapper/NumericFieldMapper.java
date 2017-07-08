@@ -3,7 +3,7 @@ package org.elasticsearch.mapper.x5.mapper;
 import com.google.common.collect.ImmutableMap;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.NumberField;
-import org.elasticsearch.mapper.x5.annotations.fieldtype.NumberType;
+import org.elasticsearch.mapper.x5.annotations.enums.NumberType;
 import org.elasticsearch.mapper.x5.utils.BeanUtils;
 import org.elasticsearch.mapper.x5.utils.StringUtils;
 

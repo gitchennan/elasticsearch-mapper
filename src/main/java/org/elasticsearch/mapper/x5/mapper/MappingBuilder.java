@@ -122,8 +122,16 @@ public class MappingBuilder {
     private XContentBuilder buildFieldProperty(XContentBuilder mappingBuilder, Field field) throws IOException {
         mappingBuilder.startObject(field.getName());
 
+        // Percolator field
+        if (PercolatorFieldMapper.isValidPercolatorFieldType(field)) {
+            PercolatorFieldMapper.mapDataType(mappingBuilder, field);
+        }
+        // IP field
+        else if (IPFieldMapper.isValidIPFieldType(field)) {
+            IPFieldMapper.mapDataType(mappingBuilder, field);
+        }
         // Range field
-        if (RangeFieldMapper.isValidRangeFieldType(field)) {
+        else if (RangeFieldMapper.isValidRangeFieldType(field)) {
             RangeFieldMapper.mapDataType(mappingBuilder, field);
         }
         // Number
@@ -141,6 +149,10 @@ public class MappingBuilder {
         // Multi field
         else if (MultiFieldMapper.isValidMultiFieldType(field)) {
             MultiFieldMapper.mapDataType(mappingBuilder, field);
+        }
+        // Completion Field
+        else if (CompletionFieldMapper.isValidCompletionFieldType(field)) {
+            CompletionFieldMapper.mapDataType(mappingBuilder, field);
         }
         // String field
         else if (StringFieldMapper.isValidStringFieldType(field)) {

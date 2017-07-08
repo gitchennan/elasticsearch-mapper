@@ -1,4 +1,4 @@
-package org.elasticsearch.mapper.x5.annotations.fieldtype;
+package org.elasticsearch.mapper.x5.annotations.enums;
 
 import java.lang.String;
 

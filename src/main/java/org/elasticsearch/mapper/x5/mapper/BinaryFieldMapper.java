@@ -2,8 +2,6 @@ package org.elasticsearch.mapper.x5.mapper;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.BinaryField;
-import org.elasticsearch.mapper.x5.annotations.fieldtype.BooleanField;
-import org.elasticsearch.mapper.x5.utils.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

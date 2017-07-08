@@ -1,5 +1,10 @@
 package org.elasticsearch.mapper.x5.annotations.fieldtype;
 
+import org.elasticsearch.mapper.x5.annotations.enums.IndexOptions;
+import org.elasticsearch.mapper.x5.annotations.enums.SimilarityAlgorithm;
+import org.elasticsearch.mapper.x5.annotations.enums.StringType;
+import org.elasticsearch.mapper.x5.annotations.enums.TermVector;
+
 import java.lang.annotation.*;
 
 @Inherited
@@ -9,7 +14,7 @@ public @interface StringField {
     /**
      * type of string
      * <p>
-     * {@link org.elasticsearch.mapper.x5.annotations.fieldtype.StringType}
+     * {@link StringType}
      */
     StringType type();
 

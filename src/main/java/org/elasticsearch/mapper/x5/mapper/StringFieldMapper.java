@@ -1,6 +1,10 @@
 package org.elasticsearch.mapper.x5.mapper;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.mapper.x5.annotations.enums.IndexOptions;
+import org.elasticsearch.mapper.x5.annotations.enums.SimilarityAlgorithm;
+import org.elasticsearch.mapper.x5.annotations.enums.StringType;
+import org.elasticsearch.mapper.x5.annotations.enums.TermVector;
 import org.elasticsearch.mapper.x5.annotations.fieldtype.*;
 import org.elasticsearch.mapper.x5.utils.BeanUtils;
 import org.elasticsearch.mapper.x5.utils.StringUtils;
@@ -27,7 +31,6 @@ public class StringFieldMapper {
 
     public static void mapDataType(XContentBuilder mappingBuilder, StringField stringField) throws IOException {
         mappingBuilder.field("type", stringField.type().code());
-
 
         if (stringField.boost() != 1.0f) {
             mappingBuilder.field("boost", stringField.boost());
