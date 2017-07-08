@@ -1,24 +1,24 @@
 package org.elasticsearch.mapper.bean;
 
-public class Range<DateType> {
+public class Range<DataType> {
 
-    DateType gte;
+    DataType gte;
 
-    DateType lte;
+    DataType lte;
 
-    public DateType getGte() {
+    public DataType getGte() {
         return gte;
     }
 
-    public void setGte(DateType gte) {
+    public void setGte(DataType gte) {
         this.gte = gte;
     }
 
-    public DateType getLte() {
+    public DataType getLte() {
         return lte;
     }
 
-    public void setLte(DateType lte) {
+    public void setLte(DataType lte) {
         this.lte = lte;
     }
 }

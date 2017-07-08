@@ -4,9 +4,9 @@ package org.elasticsearch.mapper.mapper;
 import com.google.common.collect.Maps;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.mapper.annotations.Document;
 import org.elasticsearch.mapper.annotations.IgnoreField;
 import org.elasticsearch.mapper.utils.BeanUtils;
-import org.elasticsearch.mapper.annotations.Document;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -122,8 +122,12 @@ public class MappingBuilder {
     private XContentBuilder buildFieldProperty(XContentBuilder mappingBuilder, Field field) throws IOException {
         mappingBuilder.startObject(field.getName());
 
+        // Geo point  field
+        if (GeoPointFieldMapper.isValidGeoPointFieldType(field)) {
+            GeoPointFieldMapper.mapDataType(mappingBuilder, field);
+        }
         // Percolator field
-        if (PercolatorFieldMapper.isValidPercolatorFieldType(field)) {
+        else if (PercolatorFieldMapper.isValidPercolatorFieldType(field)) {
             PercolatorFieldMapper.mapDataType(mappingBuilder, field);
         }
         // IP field
